@@ -1,16 +1,7 @@
 import {Brick} from './brick';
+import * as assert from 'assert';
 
 export abstract class World {
-  /**
-   * The length, width and height of the world.
-   */
-    // tslint:disable-next-line:variable-name
-  private readonly _dimensions: [number, number, number];
-
-  // maybe the world does not need to hold every block and position. it would be more efficient to only store the blocks and get their
-  // position from them
-  private readonly space: Brick[][][];
-  private readonly usedBricks: Array<Brick>;
 
   /**
    * @param dimensions the dimensions i.e. x,y,z
@@ -23,6 +14,20 @@ export abstract class World {
           .fill(null)));
     this.usedBricks = new Array<Brick>();
   }
+
+  get dimensions(): [number, number, number] {
+    return this._dimensions;
+  }
+  /**
+   * The length, width and height of the world.
+   */
+    // tslint:disable-next-line:variable-name
+  private readonly _dimensions: [number, number, number];
+
+  // maybe the world does not need to hold every block and position. it would be more efficient to only store the blocks and get their
+  // position from them
+  private readonly space: Brick[][][];
+  private readonly usedBricks: Array<Brick>;
 
   /**
    * Removes all references to the block.
@@ -41,75 +46,55 @@ export abstract class World {
     }
   }
 
-  /**
-   * Put a brick on the bottom of the world.
-   * A brick can be connected to every position (within the world boundaries) at the bottom of the world.
-   * @param brick the brick
-   * @param position the position for the brick, i.e. [x,y,z]
-   */
-  protected putBrick(brick: Brick, position: [number, number, number]): boolean | never {
-    // check if the brick fits in the world
-    if (position.some(value => value < 0)) {
-      throw new Error(`Brick can't be placed at position (${position})!`);
-    }
-    if (position[0] + brick.dimensions[0] >= this.dimensions[0]
-    || position[1] + brick.dimensions[1] >= this.dimensions[1]
-    || position[2] + brick.dimensions[2] >= this.dimensions[2]) {
-      throw new Error(`Brick can't be placed at position (${position}) since it would exceed the worlds space!`);
-    }
-
-    // check if the brick is connected to another brick
-    // other brick
-    for (const otherBrick of this.usedBricks) {
-      if (otherBrick.isConnectedTo(brick)) {
-        throw new Error(`Other brick are already connected to this brick. Use a completely disconnected brick!`);
-      }
-    }
-    // brick
-    if (brick.isConnectedToAnyBrick()) {
-      throw new Error(`This brick is already connected to other bricks. Use a completely disconnected brick!`);
-    }
-
-    // check whether the brick is already in this world
-    // brick is already in world from the brick's perspective
-    if (brick.position && brick.position.some(value => value !== null)) {
-      throw new Error(`Brick has already a position (${brick.position})!`);
-    }
-
-    this.isBrickPossibleAt(brick, position);
-    this.placeBrickAt(brick, position);
-    this.usedBricks.push(brick);
-    return true;
+  private static assertPositionValid(position: [number, number, number]) {
+    assert(position.every(dim => dim >= 0), `Brick can't be placed at position (${position})!`);
   }
 
-  /**
-   * Returns true if the brick is allowed a the given position according to the size of the brick and adjacent bricks on the bottom and top.
-   * @param brick the brick
-   * @param position the position
-   */
-  private isBrickPossibleAt(brick: Brick, position: [number, number, number]): boolean {
+  private static assertWithinWorldBounds(objectPosition: [number, number, number], objectDimensions: [number, number, number],
+                                         worldDimensions: [number, number, number]) {
+    assert(objectPosition[0] + objectDimensions[0] <= worldDimensions[0]
+      && objectPosition[1] + objectDimensions[1] <= worldDimensions[1]
+      && objectPosition[2] + objectDimensions[2] <= worldDimensions[2],
+      `Brick can't be placed at position (${objectPosition}) since it would exceed the worlds space!`);
+  }
 
+  private static assertBrickNotConnectedToAny(brick: Brick) {
+    assert(!brick.isConnectedToAnyBrick(),
+      `Brick is already connected to other bricks. Use a completely disconnected brick!`);
+  }
+
+  private static assertNoneConnectedToBrick(brick: Brick, otherBricks: Array<Brick>) {
+    assert(otherBricks.every(otherBrick => !otherBrick.isConnectedTo(brick)),
+      `Other bricks are already connected to this brick. Use a completely disconnected brick!`);
+  }
+
+  private static assertBrickNotPositioned(brick: Brick) {
+    assert(brick.position === null || brick.position.every(dim => dim === null), `Brick has already a position (${brick.position})!`);
+  }
+
+  private static assertBrickNotInWorld(brick: Brick, space: Brick[][][]) {
+    assert(space.every(x => x.every(y => y.every(z => z !== brick))),
+      `Brick is already referenced!`);
+  }
+
+  private static assertBrickFits(brick: Brick, position: [number, number, number], space: Brick[][][]) {
     // check whether the brick would fit at the desired position and check whether the brick is already in this world
-    for (let xCheck = 0; xCheck < this.space.length; xCheck++) {
-      for (let yCheck = 0; yCheck < this.space[xCheck].length; yCheck++) {
-        for (let zCheck = 0; zCheck < this.space[xCheck][yCheck].length; zCheck++) {
+    for (let x = 0; x < space.length; x++) {
+      for (let y = 0; y < space[x].length; y++) {
+        for (let z = 0; z < space[x][y].length; z++) {
           // for every position
-          // brick is already in world from the brick's perspective
-          if (this.space[xCheck][yCheck][zCheck] === brick) {
-            throw new Error(`Brick is already in use at position (${xCheck},${yCheck},${zCheck})`);
-          } else {
-            // check if the brick would fit at this position
-            if (position[0] <=  xCheck && xCheck <= position[1] + brick.dimensions[0]
-              && position[1] <=  yCheck && yCheck <= position[1] + brick.dimensions[1]
-              && position[2] <=  zCheck && zCheck <= position[2] + brick.dimensions[2]
-              && this.space[xCheck][yCheck][zCheck] !== null) {
-              throw new Error(`Brick cannot be placed, because some space is already occupied (${[xCheck, yCheck, zCheck]})`);
-            }
+          // check if the brick would fit at this position
+          if (position[0] <= x && x < position[0] + brick.dimensions[0]
+            && position[1] <= y && y < position[1] + brick.dimensions[1]
+            && position[2] <= z && z < position[2] + brick.dimensions[2]) {
+            assert(space[x][y][z] === null, `Brick cannot be placed, because some space is already occupied (${[x, y, z]})`);
           }
         }
       }
     }
+  }
 
+  private static assertConnectableBelowOrAbove(brick: Brick, position: [number, number, number], space: Brick[][][]) {
     // check the bottom plane and the top plane whether there are bricks which would allow or prevent to put this brick there
     // right now all top and bottom planes of bricks are full of connectors
     // the bottom planes of the world is full of connectors
@@ -118,26 +103,50 @@ export abstract class World {
     // 1. get the brick above and below
     const bricksBelow = [];
     const bricksAbove = [];
-    for (let x = position[0]; x <= brick.dimensions[0]; x++) {
-      for (let y = position[1]; y <= brick.dimensions[1]; y++) {
+    for (let x = position[0]; x < brick.dimensions[0]; x++) {
+      for (let y = position[1]; y < brick.dimensions[1]; y++) {
         // check bottom plane (z-1) (the position is on the bottom plane - always fine!)
         if (!onBottomPlane) {
-          const below = this.space[x][y][position[2] - 1];
-          if (below !== null) {
-            bricksBelow.push(below);
+          const brickBelow = space[x][y][position[2] - 1];
+          if (brickBelow !== null) {
+            bricksBelow.push(brickBelow);
           }
         }
         // check top plane (z+1)
-        const above = this.space[x][y][position[2] + 1];
-        if (above !== null) {
-          bricksAbove.push(above);
+        const brickAbove = space[x][y][position[2] + brick.dimensions[2]];
+        if (brickAbove !== null) {
+          bricksAbove.push(brickAbove);
         }
       }
     }
     // 2. check if there are some (the position is on the bottom plane - always fine!)
-    if (bricksAbove.length + bricksBelow.length <= 0 && !onBottomPlane) {
-      throw new Error(`Brick can't be put at (${position}) because there no adjacent brick to connect it to!`);
-    }
+    assert(bricksAbove.length + bricksBelow.length > 0 || onBottomPlane,
+      `Not enough bricks to connect to below and above!`);
+  }
+
+  /**
+   * Put a brick on the bottom of the world.
+   * A brick can be connected to every position (within the world boundaries) at the bottom of the world.
+   * @param brick the brick
+   * @param position the position for the brick, i.e. [x,y,z]
+   */
+  protected putBrick(brick: Brick, position: [number, number, number]): boolean | never {
+    // check if the brick fits in the world
+    World.assertPositionValid(position);
+    World.assertWithinWorldBounds(position, brick.dimensions, this._dimensions);
+
+    World.assertBrickNotPositioned(brick);
+    World.assertBrickNotConnectedToAny(brick);
+    World.assertNoneConnectedToBrick(brick, this.usedBricks);
+
+    World.assertBrickNotInWorld(brick, this.space);
+
+    World.assertBrickFits(brick, position, this.space);
+    World.assertConnectableBelowOrAbove(brick, position, this.space);
+
+    this.placeBrickAt(brick, position);
+    this.usedBricks.push(brick);
+    // window.console.debug(`Put brick result:`, brick);
     return true;
   }
 
@@ -154,10 +163,6 @@ export abstract class World {
     this.usedBricks.splice(index, 1);
   }
 
-  get dimensions(): [number, number, number] {
-    return this._dimensions;
-  }
-
   /**
    * Returns a list of possible positions for this brick.
    * @param brick the brick
@@ -169,10 +174,13 @@ export abstract class World {
       for (let x = 0; x < this.dimensions[0]; x++) {
         for (let y = 0; y < this.dimensions[1]; y++) {
           try {
-            this.isBrickPossibleAt(brick, [x, y, z]);
+            World.assertWithinWorldBounds([x, y, z], brick.dimensions, this._dimensions);
+            World.assertBrickFits(brick, [x, y, z], this.space);
+            World.assertConnectableBelowOrAbove(brick, [x, y, z], this.space);
+            // window.console.debug(`Possible position ${[x, y, z]}`);
             possiblePositions.push([x, y, z]);
           } catch (e) {
-            // continue;
+            // window.console.debug(`Impossible position ${[x, y, z]}`, e);
           }
         }
       }
@@ -188,33 +196,31 @@ export abstract class World {
   private placeBrickAt(brick: Brick, position: [number, number, number]) {
     // set position in world
     brick.position = position;
-
-    // add to world and adjacent bricks
-    for (let x = position[0]; x <= brick.dimensions[0]; x++) {
-      for (let y = position[1]; y <= brick.dimensions[1]; y++) {
-        for (let z = position[2]; z <= brick.dimensions[2]; z++) {
-          // add to world
-          this.space[x][y][z] = brick;
-        }
-      }
-    }
+    window.console.debug(`World.placeBrickAt: ${brick.position}`);
 
     const onBottomPlane = position[2] === 0;
-    for (let x = position[0]; x <= brick.dimensions[0]; x++) {
-      for (let y = position[1]; y <= brick.dimensions[1]; y++) {
+    // add to world and adjacent bricks
+    for (let x = position[0]; x < brick.dimensions[0]; x++) {
+      for (let y = position[1]; y < brick.dimensions[1]; y++) {
+
         if (!onBottomPlane) {
           // bottom plane (z-1)
-          const below = this.space[x][y][position[2] - 1];
-          if (below !== null) {
+          const brickBelow = this.space[x][y][position[2] - 1];
+          if (brickBelow !== null) {
             // add to the bricks bottom connections
-            below.connect(brick, [x, y, position[2] - 1]);
+            brickBelow.connect(brick, [x, y, position[2] - 1]);
           }
         }
         // top plane (z+1)
-        const above = this.space[x][y][position[2] + 1];
-        if (above !== null) {
+        const brickAbove = this.space[x][y][position[2] + brick.dimensions[2]];
+        if (brickAbove !== null) {
           // add to the bricks top connections
-          above.connect(brick, [x, y, position[2] - 1]);
+          brickAbove.connect(brick, [x, y, position[2] + brick.dimensions[2]]);
+        }
+
+        for (let z = position[2]; z < brick.dimensions[2]; z++) {
+          // add to world
+          this.space[x][y][z] = brick;
         }
       }
     }

@@ -99,7 +99,10 @@ export class BabylonJsWorld extends World {
    */
   public putBrick(brick: Brick, position: [number, number, number]): boolean {
     if (super.putBrick(brick, position)) {
-      BabylonJsBrick.fromBrick(brick).draw(this.scene);
+      // window.console.debug(`Brick:`, brick);
+      const babylonBrick: BabylonJsBrick = BabylonJsBrick.fromBrick(brick);
+      // window.console.debug(`BabylonBrick:`, babylonBrick);
+      babylonBrick.draw(this.scene);
       return true;
     }
   }

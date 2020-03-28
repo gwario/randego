@@ -14,8 +14,9 @@ export class BabylonJsBrick extends Brick {
    * @param dimensions the dimensions i.e. x,y,z
    * @param color the color in hex e.g. '#AABBCCD' or '#ABABAB'
    */
-  constructor(dimensions?: [number, number, number], color?: string) {
-    super(dimensions, color);
+  constructor(dimensions: [number, number, number], color: string,
+              position?: [number, number, number], connectionsTop?: Brick[][], connectionsBottom?: Brick[][]) {
+    super(dimensions, color, position, connectionsTop, connectionsBottom);
   }
 
   /**
@@ -23,7 +24,7 @@ export class BabylonJsBrick extends Brick {
    * @param brick the brick.
    */
   public static fromBrick(brick: Brick): BabylonJsBrick {
-    return new BabylonJsBrick(brick.dimensions, brick.color);
+    return new BabylonJsBrick(brick.dimensions, brick.color, brick.position, brick.connectionsTop, brick.connectionsBottom);
   }
 
   /**
@@ -33,7 +34,7 @@ export class BabylonJsBrick extends Brick {
   public draw(scene: Scene) {
     this.mesh = MeshBuilder.CreateBox(
       'brick',
-      {width: this.dimensions[0], depth: this.dimensions[1], height: this.dimensions[0]},
+      {width: this.dimensions[0], depth: this.dimensions[1], height: this.dimensions[2]},
       scene);
     this.mesh.material =  new StandardMaterial('brick_material', scene);
     (this.mesh.material as StandardMaterial).diffuseColor = Color3.FromHexString(this.color);

@@ -65,12 +65,13 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   onSingleStepBuildStarted($event: void) {
     const nextBrick = this.pickRandomBrickFromBox();
-    // TODO maybe first place all the bricks and then start the rendering in the given interval
     const possiblePositions: Array<[number, number, number]> = this.world.possiblePositionsFor(nextBrick);
+    window.console.debug(`Possible positions:`, possiblePositions);
     if (possiblePositions.length > 0) {
       const randomPositionIndex = Math.floor(Math.random() * possiblePositions.length);
       // const nextPosition = this.nextRandomWorldPosition();
       const nextPosition = possiblePositions[randomPositionIndex];
+      window.console.debug(`Trying to place brick at positions:`, nextPosition);
       this.world.putBrick(BabylonJsBrick.fromBrick(nextBrick), nextPosition);
       window.console.debug(`Put brick at ${nextPosition}`);
     } else {

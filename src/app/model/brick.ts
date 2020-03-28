@@ -3,15 +3,17 @@ export abstract class Brick {
    * Position of the brick i.e. [x, y, z]
    */
     // tslint:disable-next-line:variable-name
-  private _position: [number, number, number];
+  protected _position: [number, number, number];
   /**
    * Dimensions of the brick, i.e. [dx, dy, dz]
    */
-  public readonly dimensions: [number, number, number];
+    // tslint:disable-next-line:variable-name
+  private readonly _dimensions: [number, number, number];
   /**
    * color value in hex in the format '#[AA]RRGGBB', e.g. '#AABBCCDD' or '#BBCCDD'
    */
-  color: string;
+    // tslint:disable-next-line:variable-name
+  private readonly _color: string;
   /*
    * Connectors of a brick allow other bricks to be connected to this brick.
    * Each connections can references another brick.
@@ -20,12 +22,14 @@ export abstract class Brick {
    * Connectors on the top. Array of {Brick#dx} times {Brick#dy}.
    * Defined as (x,y,z+dz)->(x+dx,y+dy,z+dz)
    */
-  connectionsTop: Brick[][];
+    // tslint:disable-next-line:variable-name
+  private readonly _connectionsTop: Brick[][];
   /**
    * Connectors on the bottom. Array of {Brick#dx} times {Brick#dy}.
    * Defined as (x,y,z)->(x+dx,y+dy,z)
    */
-  connectionsBottom: Brick[][];
+    // tslint:disable-next-line:variable-name
+  private readonly _connectionsBottom: Brick[][];
   // /**
   //  * Connectors on the front. Array of {Brick#dx} times {Brick#dz}.
   //  * Defined as (x,y+dy,z)->(x+dx,y+dy,z+dz)
@@ -47,14 +51,19 @@ export abstract class Brick {
   //  */
   // connectionsRight: Brick[][];
 
-  protected constructor(dimensions: [number, number, number], color: string) {
+  protected constructor(dimensions: [number, number, number], color: string,
+                        position?: [number, number, number], connectionsTop?: Brick[][], connectionsBottom?: Brick[][]) {
     if (dimensions.some(value => value <= 1)) {
       throw new Error(`A brick must at least be 2x2x2 in order to hold bottom and top connectors!`);
     }
-    this.dimensions = dimensions;
-    this.color = color;
-    this.connectionsTop = new Array(this.dimensions[0]).fill(null).map(() => new Array(this.dimensions[1]).fill(null));
-    this.connectionsBottom = new Array(this.dimensions[0]).fill(null).map(() => new Array(this.dimensions[1]).fill(null));
+    this._dimensions = dimensions;
+    this._color = color;
+    this._position = position
+      || null;
+    this._connectionsTop = connectionsTop
+      || new Array(this._dimensions[0]).fill(null).map(() => new Array(this._dimensions[1]).fill(null));
+    this._connectionsBottom = connectionsBottom
+      || new Array(this._dimensions[0]).fill(null).map(() => new Array(this._dimensions[1]).fill(null));
     // this.connectionsFront = new Array(this.dx).fill(null).map(() => new Array(this.dz).fill(null));
     // this.connectionsBack = new Array(this.dx).fill(null).map(() => new Array(this.dz).fill(null));
     // this.connectionsLeft = new Array(this.dy).fill(null).map(() => new Array(this.dz).fill(null));
@@ -92,8 +101,8 @@ export abstract class Brick {
    * Disconnects a single brick from this brick.
    */
   public disconnectBrick(brick: Brick) {
-    Brick.removeConnectionsTo(this.connectionsTop, brick);
-    Brick.removeConnectionsTo(this.connectionsBottom, brick);
+    Brick.removeConnectionsTo(this._connectionsTop, brick);
+    Brick.removeConnectionsTo(this._connectionsBottom, brick);
   }
 
   /**
@@ -105,16 +114,16 @@ export abstract class Brick {
       adjacentBrick.disconnectBrick(this);
     }
     // remove adjacent bricks
-    Brick.removeConnections(this.connectionsTop);
-    Brick.removeConnections(this.connectionsBottom);
+    Brick.removeConnections(this._connectionsTop);
+    Brick.removeConnections(this._connectionsBottom);
     this._position = [null, null, null];
   }
 
   // TODO optimize by keeping track of added bricks
   private adjacentBricks(): Set<Brick> {
     const adjacentBricks = new Set<Brick>();
-    this.connectionsTop.forEach((bricks) => bricks.forEach((brick) => brick && adjacentBricks.add(brick)));
-    this.connectionsBottom.forEach((bricks) => bricks.forEach((brick) => brick && adjacentBricks.add(brick)));
+    this._connectionsTop.forEach((bricks) => bricks.forEach((brick) => brick && adjacentBricks.add(brick)));
+    this._connectionsBottom.forEach((bricks) => bricks.forEach((brick) => brick && adjacentBricks.add(brick)));
     return adjacentBricks;
   }
 
@@ -145,10 +154,10 @@ export abstract class Brick {
     const z = position[2];
     if (z === this._position[2]) {
       // bottom connector
-      this.connectionsBottom[xDiff][yDiff] = brick;
-    } else if (z === this._position[2] + this.dimensions[2] - 1) {
+      this._connectionsBottom[xDiff][yDiff] = brick;
+    } else if (z === this._position[2] + this._dimensions[2] - 1) {
       // top connector
-      this.connectionsTop[xDiff][yDiff] = brick;
+      this._connectionsTop[xDiff][yDiff] = brick;
     } else {
       throw new Error(`There is no connector at (${position})!`);
     }
@@ -167,5 +176,17 @@ export abstract class Brick {
    */
   set position(value: [number, number, number]) {
     this._position = value;
+  }
+  get color(): string {
+    return this._color;
+  }
+  get connectionsTop(): Brick[][] {
+    return this._connectionsTop;
+  }
+  get connectionsBottom(): Brick[][] {
+    return this._connectionsBottom;
+  }
+  get dimensions(): [number, number, number] {
+    return this._dimensions;
   }
 }
