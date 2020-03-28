@@ -1,38 +1,15 @@
-<mat-toolbar color="primary" class="mat-elevation-z10" role="heading">
-  <mat-toolbar-row><span>Randego</span></mat-toolbar-row>
-</mat-toolbar>
-<mat-grid-list cols="2">
-  <mat-grid-tile>
-    <span style="align-self: normal; margin: 40px">
-      <form [formGroup]="blocksForm" (ngSubmit)="createBlocks()">
-        <div>
-          <div>Length: {{blocksForm.get('length').value || 2}}</div>
-          <div><mat-slider formControlName="length" min="2" max="8" step="1" value="2"></mat-slider></div>
-        </div>
-        <div>
-          <div>Width: {{blocksForm.get('width').value || 2}}</div>
-          <div><mat-slider formControlName="width" min="2" max="8" step="1" value="2"></mat-slider></div>
-        </div>
-        <div>
-          <div>Height: {{blocksForm.get('height').value || 2}}</div>
-          <div><mat-slider formControlName="height" min="2" max="8" step="1" value="2"></mat-slider></div>
-        </div>
-        <div>Color: <mcc-color-picker selectedColor="#a8e6cf" [hideEmptyUsedColors]="true" [hideButtons]="true" [hideHexForms]="true" (selected)="blocksForm.get('color').setValue($event)">
-          <mcc-color-picker-collection [colors]="predefinedColors" [hideEmpty]="true"></mcc-color-picker-collection>
-          </mcc-color-picker>
-        </div>
-        <div>Amount: <input matInput type="number" formControlName="amount" style="max-width: 3em"></div>
-        <button mat-raised-button type="submit" [disabled]="!blocksForm.valid" color="primary">Create</button>
-      </form>
-    </span>
-    <span style="align-self: normal; margin: 40px">
-      <canvas id="preview"></canvas>
-    </span>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <canvas id="world"></canvas>
-  </mat-grid-tile>
-</mat-grid-list>
+<nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Randego</a>
+</nav>
+<section class="container-fluid pb-3">
+  <div class="row pt-3">
+    <app-box-item-creator id="creator" class="col-5" (created)="onBoxItemCreated($event)"></app-box-item-creator>
+    <app-box id="library" class="col-7" [brickNumbers]="library" (removed)="onBoxItemRemoved($event)"></app-box>
+  </div>
+  <div class="row pt-3">
+    <app-builder id="builder" class="col-12" [box]="library"></app-builder>
+  </div>
+</section>
 
 <!-- Footer -->
 <!--<footer>-->

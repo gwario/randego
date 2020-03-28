@@ -1,0 +1,16 @@
+<h2>Builder</h2>
+<div class="container-fluid">
+  <div class="row">
+    <app-builder-controls id="builder-controls" class="col-3"
+                          (autoBuildStarted)="onAutoBuildStarted($event)"
+                          (autoBuildCancelled)="onAutoBuildCancelled($event)"
+                          [autoBuildProgress]="autoBuildProgress"
+                          (singleStepBuildStarted)="onSingleStepBuildStarted($event)"></app-builder-controls>
+    <canvas #canvas id="preview-builder" class="col-9"></canvas>
+  </div>
+  <div class="row">
+    <div id="stats" class="col-12">
+      <span *ngIf="autoBuildProgress > 0">{{autoBuildProgress}} bricks left...</span>
+    </div>
+  </div>
+</div>

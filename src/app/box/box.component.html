@@ -1,0 +1,8 @@
+<h2>Library of Block</h2>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-4 box-item" *ngFor="let item of brickNumbers; index as i;">
+      <app-box-item [brick]="item[0]" [amount]="item[1]" [index]="i" (removed)="onBocItemRemoved($event)"></app-box-item>
+    </div>
+  </div>
+</div>

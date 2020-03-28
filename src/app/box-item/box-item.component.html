@@ -1,0 +1,9 @@
+<div class="card">
+  <canvas class="card-img-top" #canvas id="preview-box-item-{{index}}"></canvas>
+  <div class="card-body">
+    <!--          <h5 class="card-title">Card title</h5>-->
+    <div class="card-text">Dimensions: {{brick.dimensions.join(" x ")}}</div>
+    <div class="card-text">Amount: {{amount}}</div>
+    <button class="btn btn-outline-primary" (click)="removeBoxItem(index, brick, amount)">DELETE</button>
+  </div>
+</div>

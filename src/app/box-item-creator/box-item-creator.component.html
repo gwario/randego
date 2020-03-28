@@ -1,0 +1,41 @@
+<h2>Brick Creator</h2>
+<div class="container-fluid">
+  <div class="row">
+    <form class="col-6" [formGroup]="bricksForm" (ngSubmit)="createBoxItem()">
+      <div class="form-group">
+        <label for="inputLength">Length:</label> {{bricksForm.get('length').value || 2}}
+        <mat-slider id="inputLength" class="form-control" formControlName="length" min="2" max="8" step="1"
+                    [value]="bricksFormDefaults.length"></mat-slider>
+      </div>
+      <div class="form-group">
+        <label for="inputWidth">Width:</label> {{bricksForm.get('width').value || 2}}
+        <mat-slider id="inputWidth" class="form-control" formControlName="width" min="2" max="8" step="1"
+                    [value]="bricksFormDefaults.width"></mat-slider>
+      </div>
+      <div class="form-group">
+        <label for="inputHeight">Height:</label> {{bricksForm.get('height').value || 2}}
+        <mat-slider id="inputHeight" class="form-control" formControlName="height" min="2" max="8" step="1"
+                    [value]="bricksFormDefaults.height"></mat-slider>
+      </div>
+      <div class="form-group">
+        <label for="inputColor">Color</label>
+        <mcc-color-picker id="inputColor" class="form-control"
+                          selectedColor="{{bricksFormDefaults.color}}" hideEmptyUsedColors="true"
+                          hideTransparentUsedColors="true" hideButtons="true" hideHexForms="true"
+                          (selected)="bricksForm.get('color').setValue($event)">
+          <mcc-color-picker-collection [colors]="predefinedColors" hideEmpty="true"></mcc-color-picker-collection>
+        </mcc-color-picker>
+      </div>
+      <div class="form-group">
+        <label for="inputAmount">Amount</label>
+        <input id="inputAmount" class="form-control" matInput type="number" formControlName="amount"
+               [value]="bricksFormDefaults.amount">
+      </div>
+      <button class="btn btn-primary" type="submit" [disabled]="!bricksForm.valid">Create</button>
+    </form>
+
+    <div class="col-6">
+      <canvas #canvas id="preview-creator"></canvas>
+    </div>
+  </div>
+</div>

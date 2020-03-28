@@ -1,7 +1,7 @@
-import { Block } from './block';
+import { Brick } from './brick';
 
 describe('Block', () => {
   it('should create an instance', () => {
-    expect(new Block()).toBeTruthy();
+    expect(new Brick()).toBeTruthy();
   });
 });
