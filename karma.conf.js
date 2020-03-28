@@ -27,13 +27,14 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadlessNoSandbox'],
     customLaunchers: {
       ChromeHeadlessNoSandbox: {
-        base: 'Chrome',
-        flags: ['--no-sandbox', '--headless']
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
       }
     },
+    concurrency: Infinity,
     singleRun: false,
     restartOnFileChange: true
   });

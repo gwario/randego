@@ -11,15 +11,6 @@ export class BabylonJsBrick extends Brick {
   private mesh: Mesh;
 
   /**
-   * @param dimensions the dimensions i.e. x,y,z
-   * @param color the color in hex e.g. '#AABBCCD' or '#ABABAB'
-   */
-  constructor(dimensions: [number, number, number], color: string,
-              position?: [number, number, number], connectionsTop?: Brick[][], connectionsBottom?: Brick[][]) {
-    super(dimensions, color, position, connectionsTop, connectionsBottom);
-  }
-
-  /**
    * Creates a babylonjs brick of a plain brick.
    * @param brick the brick.
    */

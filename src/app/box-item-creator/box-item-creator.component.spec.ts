@@ -1,14 +1,16 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { BoxItemCreatorComponent } from './box-item-creator.component';
+import {BoxItemCreatorComponent} from './box-item-creator.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
-describe('BrickCreatorComponent', () => {
+describe('BoxItemCreatorComponent', () => {
   let component: BoxItemCreatorComponent;
   let fixture: ComponentFixture<BoxItemCreatorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BoxItemCreatorComponent ]
+      declarations: [ BoxItemCreatorComponent ],
+      imports: [ ReactiveFormsModule ]
     })
     .compileComponents();
   }));
@@ -16,6 +18,7 @@ describe('BrickCreatorComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BoxItemCreatorComponent);
     component = fixture.componentInstance;
+
     fixture.detectChanges();
   });
 

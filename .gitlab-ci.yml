@@ -13,11 +13,11 @@ stages:
   - test
   - build
 
-job 1:
+unit tests:
   stage: test
   script: node_modules/.bin/ng test
 
-job 2:
+e2e tests:
   stage: test
   script: node_modules/.bin/ng e2e
 

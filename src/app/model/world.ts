@@ -1,12 +1,12 @@
 import {Brick} from './brick';
 import * as assert from 'assert';
 
-export abstract class World {
+export class World {
 
   /**
    * @param dimensions the dimensions i.e. x,y,z
    */
-  protected constructor(dimensions: [number, number, number]) {
+  constructor(dimensions: [number, number, number]) {
     this._dimensions = dimensions;
     this.space = new Array(this._dimensions[0])
       .fill(null).map(() => new Array(this._dimensions[1])
@@ -15,9 +15,6 @@ export abstract class World {
     this.usedBricks = new Array<Brick>();
   }
 
-  get dimensions(): [number, number, number] {
-    return this._dimensions;
-  }
   /**
    * The length, width and height of the world.
    */
@@ -34,7 +31,7 @@ export abstract class World {
    * @param references the references.
    * @param block the block.
    */
-  private static removeReferencesTo(references: Brick[][][], block: Brick) {
+  public static removeReferencesTo(references: Brick[][][], block: Brick) {
     for (const coord1 of Object.keys(references)) {
       for (const coord2 of Object.keys(references[coord1])) {
         for (const coord3 of Object.keys(references[coord1][coord2])) {
@@ -46,11 +43,11 @@ export abstract class World {
     }
   }
 
-  private static assertPositionValid(position: [number, number, number]) {
+  public static assertPositionValid(position: [number, number, number]) {
     assert(position.every(dim => dim >= 0), `Brick can't be placed at position (${position})!`);
   }
 
-  private static assertWithinWorldBounds(objectPosition: [number, number, number], objectDimensions: [number, number, number],
+  public static assertWithinWorldBounds(objectPosition: [number, number, number], objectDimensions: [number, number, number],
                                          worldDimensions: [number, number, number]) {
     assert(objectPosition[0] + objectDimensions[0] <= worldDimensions[0]
       && objectPosition[1] + objectDimensions[1] <= worldDimensions[1]
@@ -58,26 +55,26 @@ export abstract class World {
       `Brick can't be placed at position (${objectPosition}) since it would exceed the worlds space!`);
   }
 
-  private static assertBrickNotConnectedToAny(brick: Brick) {
+  public static assertBrickNotConnectedToAny(brick: Brick) {
     assert(!brick.isConnectedToAnyBrick(),
       `Brick is already connected to other bricks. Use a completely disconnected brick!`);
   }
 
-  private static assertNoneConnectedToBrick(brick: Brick, otherBricks: Array<Brick>) {
+  public static assertNoneConnectedToBrick(brick: Brick, otherBricks: Array<Brick>) {
     assert(otherBricks.every(otherBrick => !otherBrick.isConnectedTo(brick)),
       `Other bricks are already connected to this brick. Use a completely disconnected brick!`);
   }
 
-  private static assertBrickNotPositioned(brick: Brick) {
+  public static assertBrickNotPositioned(brick: Brick) {
     assert(brick.position === null || brick.position.every(dim => dim === null), `Brick has already a position (${brick.position})!`);
   }
 
-  private static assertBrickNotInWorld(brick: Brick, space: Brick[][][]) {
+  public static assertBrickNotInWorld(brick: Brick, space: Brick[][][]) {
     assert(space.every(x => x.every(y => y.every(z => z !== brick))),
       `Brick is already referenced!`);
   }
 
-  private static assertBrickFits(brick: Brick, position: [number, number, number], space: Brick[][][]) {
+  public static assertBrickFits(brick: Brick, position: [number, number, number], space: Brick[][][]) {
     // check whether the brick would fit at the desired position and check whether the brick is already in this world
     for (let x = 0; x < space.length; x++) {
       for (let y = 0; y < space[x].length; y++) {
@@ -94,7 +91,7 @@ export abstract class World {
     }
   }
 
-  private static assertConnectableBelowOrAbove(brick: Brick, position: [number, number, number], space: Brick[][][]) {
+  public static assertConnectableBelowOrAbove(brick: Brick, position: [number, number, number], space: Brick[][][]) {
     // check the bottom plane and the top plane whether there are bricks which would allow or prevent to put this brick there
     // right now all top and bottom planes of bricks are full of connectors
     // the bottom planes of the world is full of connectors
@@ -130,7 +127,7 @@ export abstract class World {
    * @param brick the brick
    * @param position the position for the brick, i.e. [x,y,z]
    */
-  protected putBrick(brick: Brick, position: [number, number, number]): boolean | never {
+  public putBrick(brick: Brick, position: [number, number, number]): boolean | never {
     // check if the brick fits in the world
     World.assertPositionValid(position);
     World.assertWithinWorldBounds(position, brick.dimensions, this._dimensions);
@@ -154,7 +151,7 @@ export abstract class World {
    * Removes a brick from this world.
    * @param brick the brick to be removed.
    */
-  protected remove(brick: Brick) {
+  public remove(brick: Brick) {
     // disconnect from other bricks
     brick.disconnect();
     // remove all references to the brick from the world
@@ -167,7 +164,7 @@ export abstract class World {
    * Returns a list of possible positions for this brick.
    * @param brick the brick
    */
-  protected possiblePositionsFor(brick: Brick): Array<[number, number, number]> {
+  public possiblePositionsFor(brick: Brick): Array<[number, number, number]> {
     const possiblePositions = [];
     // check every position starting from the bottom plane.
     for (let z = 0; z < this.dimensions[2]; z++) {
@@ -224,5 +221,9 @@ export abstract class World {
         }
       }
     }
+  }
+
+  get dimensions(): [number, number, number] {
+    return this._dimensions;
   }
 }

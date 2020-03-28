@@ -1,4 +1,4 @@
-export abstract class Brick {
+export class Brick {
   /**
    * Position of the brick i.e. [x, y, z]
    */
@@ -30,29 +30,10 @@ export abstract class Brick {
    */
     // tslint:disable-next-line:variable-name
   private readonly _connectionsBottom: Brick[][];
-  // /**
-  //  * Connectors on the front. Array of {Brick#dx} times {Brick#dz}.
-  //  * Defined as (x,y+dy,z)->(x+dx,y+dy,z+dz)
-  //  */
-  // connectionsFront: Brick[][];
-  // /**
-  //  * Connectors on the back. Array of {Brick#dx} times {Brick#dz}.
-  //  * Defined as (x,y,z)->(x+dx,y,z+dz)
-  //  */
-  // connectionsBack: Brick[][];
-  // /**
-  //  * Connectors on the left. Array of {Brick#dy} times {Brick#dz}.
-  //  * Defined as (x,y,z)->(x,y+dy,z+dz)
-  //  */
-  // connectionsLeft: Brick[][];
-  // /**
-  //  * Connectors on the right. Array of {Brick#dy} times {Brick#dz}.
-  //  * Defined as (x+dx,y,z)->(x+dx,y+dy,z+dz)
-  //  */
-  // connectionsRight: Brick[][];
 
-  protected constructor(dimensions: [number, number, number], color: string,
-                        position?: [number, number, number], connectionsTop?: Brick[][], connectionsBottom?: Brick[][]) {
+  constructor(dimensions: [number, number, number], color: string,
+              position?: [number, number, number],
+              connectionsTop?: Brick[][], connectionsBottom?: Brick[][]) {
     if (dimensions.some(value => value <= 1)) {
       throw new Error(`A brick must at least be 2x2x2 in order to hold bottom and top connectors!`);
     }
@@ -64,17 +45,13 @@ export abstract class Brick {
       || new Array(this._dimensions[0]).fill(null).map(() => new Array(this._dimensions[1]).fill(null));
     this._connectionsBottom = connectionsBottom
       || new Array(this._dimensions[0]).fill(null).map(() => new Array(this._dimensions[1]).fill(null));
-    // this.connectionsFront = new Array(this.dx).fill(null).map(() => new Array(this.dz).fill(null));
-    // this.connectionsBack = new Array(this.dx).fill(null).map(() => new Array(this.dz).fill(null));
-    // this.connectionsLeft = new Array(this.dy).fill(null).map(() => new Array(this.dz).fill(null));
-    // this.connectionsRight = new Array(this.dy).fill(null).map(() => new Array(this.dz).fill(null));
   }
 
   /**
    * Removes all connections of this brick.
    * @param connections the connections.
    */
-  private static removeConnections(connections: Brick[][]) {
+  public static removeConnections(connections: Brick[][]) {
     for (const coord1 of Object.keys(connections)) {
       for (const coord2 of Object.keys(connections[coord1])) {
         connections[coord1][coord2] = null;
@@ -87,7 +64,7 @@ export abstract class Brick {
    * @param connections the connections.
    * @param brick the other brick.
    */
-  private static removeConnectionsTo(connections: Brick[][], brick: Brick) {
+  public static removeConnectionsTo(connections: Brick[][], brick: Brick) {
     for (const coord1 of Object.keys(connections)) {
       for (const coord2 of Object.keys(connections[coord1])) {
         if (connections[coord1][coord2] === brick) {
