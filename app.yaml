@@ -1,0 +1,7 @@
+runtime: nodejs10
+handlers:
+  - url: /
+    static_files: dist/randego/index.html
+    upload: dist/randego/index.html
+  - url: /
+    static_dir: dist/randego
