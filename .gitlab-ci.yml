@@ -15,7 +15,7 @@ stages:
 
 unit tests:
   stage: test
-  script: node_modules/.bin/ng test
+  script: node_modules/.bin/ng test --no-watch
 
 e2e tests:
   stage: test
