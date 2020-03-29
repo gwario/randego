@@ -1,7 +1,12 @@
 <h2>Brick Creator</h2>
 <div class="container-fluid">
   <div class="row">
-    <form class="col-6" [formGroup]="bricksForm" (ngSubmit)="createBoxItem()">
+    <div class="col">
+      <canvas #canvas id="preview-creator"></canvas>
+    </div>
+  </div>
+  <div class="row">
+    <form class="col" [formGroup]="bricksForm" (ngSubmit)="createBoxItem()">
       <div class="form-group">
         <label for="inputLength">Length:</label> {{bricksForm.get('length').value || 2}}
         <mat-slider id="inputLength" ngDefaultControl class="form-control" formControlName="length" min="2" max="8" step="1"
@@ -33,9 +38,5 @@
       </div>
       <button class="btn btn-primary" type="submit" [disabled]="!bricksForm.valid">Create</button>
     </form>
-
-    <div class="col-6">
-      <canvas #canvas id="preview-creator"></canvas>
-    </div>
   </div>
 </div>

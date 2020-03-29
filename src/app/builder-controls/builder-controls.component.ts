@@ -38,6 +38,7 @@ export class BuilderControlsComponent implements OnInit {
     const count = this.autoBuilderControlsForm.get('autoBuilderControlsCount').value;
     const interval = this.autoBuilderControlsForm.get('autoBuilderControlsInterval').value;
     this.autoBuildStarted.emit([count, interval]);
+    this.autoBuilderControlsForm.reset(this.autoBuilderControlsDefaults);
   }
 
   singleStepBuild() {

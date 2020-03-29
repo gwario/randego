@@ -3,11 +3,11 @@
 </nav>
 <section class="container-fluid pb-3">
   <div class="row pt-3">
-    <app-box-item-creator id="creator" class="col-5" (created)="onBoxItemCreated($event)"></app-box-item-creator>
-    <app-box id="library" class="col-7" [brickNumbers]="library" (removed)="onBoxItemRemoved($event)"></app-box>
+    <app-box-item-creator id="creator" class="col-xs-12 col-md-6 col-lg-5 col-xl-4" (created)="onBoxItemCreated($event)"></app-box-item-creator>
+    <app-box id="library" class="col-xs-12 col-md-6 col-lg-7 col-xl-8" [brickNumbers]="library" (removed)="onBoxItemRemoved($event)"></app-box>
   </div>
   <div class="row pt-3">
-    <app-builder id="builder" class="col-12" [box]="library"></app-builder>
+    <app-builder id="builder" class="col" [box]="library"></app-builder>
   </div>
 </section>
 
