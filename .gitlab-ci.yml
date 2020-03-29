@@ -47,7 +47,7 @@ deploy:production:
     - build:release
   script:
     - ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file $GAE_KEY_FILE
-    - tree
+    - ls
     #- ./google-cloud-sdk/bin/gcloud app deploy --project=$GAE_PROJECT_ID
   when: manual
   only:
