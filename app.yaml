@@ -1,7 +1,9 @@
 runtime: nodejs10
 handlers:
   - url: /
+    secure: always
     static_files: dist/randego/index.html
     upload: dist/randego/index.html
   - url: /
+    secure: always
     static_dir: dist/randego
