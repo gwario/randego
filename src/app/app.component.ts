@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Brick} from './model/brick';
 import {BuilderComponent} from './builder/builder.component';
+import { version } from '../../package.json';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   @ViewChild(BuilderComponent) private builder: BuilderComponent;
+  npmVersion = version;
 
   constructor() { }
 

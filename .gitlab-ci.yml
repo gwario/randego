@@ -6,7 +6,7 @@ cache:
     - node_modules/
 
 stages:
-  - test
+#  - test
   - build
   - deploy
 
@@ -47,8 +47,7 @@ deploy:production:
     - build:release
   script:
     - ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file $GAE_KEY_FILE
-    - ls
-    #- ./google-cloud-sdk/bin/gcloud app deploy --project=$GAE_PROJECT_ID
+    - ./google-cloud-sdk/bin/gcloud app deploy --project=$GAE_PROJECT_ID
   when: manual
   only:
     - tags
