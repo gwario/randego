@@ -2,6 +2,7 @@
 <div class="container-fluid">
   <div class="row">
     <app-builder-controls id="builder-controls" class="col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2"
+                          [boxSize]="brickCount(box)"
                           (autoBuildStarted)="onAutoBuildStarted($event)"
                           (autoBuildCancelled)="onAutoBuildCancelled($event)"
                           [autoBuildProgress]="autoBuildProgress"
@@ -9,6 +10,9 @@
 
     <canvas #canvas id="preview-builder" class="col-xs-12 col-sm-12 col-md-8 col-lg-9 col-xl-10"></canvas>
   </div>
+<!--  <div class="row">-->
+<!--    <canvas #canvasExp id="preview-exp" class="col-12"></canvas>-->
+<!--  </div>-->
   <div class="row">
     <div id="stats" class="col">
       <span *ngIf="autoBuildProgress > 0">{{autoBuildProgress}} bricks left...</span>

@@ -3,6 +3,9 @@ import {Brick} from '../model/brick';
 import {interval, Subscription} from 'rxjs';
 import {BabylonJsWorld} from '../model/babylon-js-world';
 import {BabylonJsBrick} from '../model/babylon-js-brick';
+import Color3 = BABYLON.Color3;
+import StandardMaterial = BABYLON.StandardMaterial;
+import MeshBuilder = BABYLON.MeshBuilder;
 
 @Component({
   selector: 'app-builder',
@@ -13,6 +16,7 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() box: Array<[Brick, number]>;
   @ViewChild('canvas', {read: ElementRef}) canvas: ElementRef<HTMLCanvasElement>;
+  // @ViewChild('canvasExp', {read: ElementRef}) canvasExp: ElementRef<HTMLCanvasElement>;
 
   private world: BabylonJsWorld;
 
@@ -25,6 +29,23 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
   }
+
+  brickCount(box: Array<[Brick, number]>): number {
+    return box.reduce((previousValue, currentValue) => previousValue[1] + currentValue[1], 0);
+  }
+
+  addMesh(scene, pos, dim, col) {
+    const mesh = MeshBuilder.CreateBox(
+      'brick',
+      {width: dim[0], depth: dim[1], height: dim[2]},
+      scene);
+    mesh.material =  new StandardMaterial('brick_material', scene);
+    (mesh.material as StandardMaterial).diffuseColor = Color3.FromHexString(col);
+    mesh.position.x = pos[0];
+    mesh.position.y = pos[1];
+    mesh.position.z = pos[2];
+  }
+
 
   ngOnDestroy(): void {
     if (this.autoBuildIntervalSubscription) {

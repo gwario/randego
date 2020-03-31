@@ -14,30 +14,28 @@ import DynamicTexture = BABYLON.DynamicTexture;
 
 export class BabylonJsWorld extends World {
 
-  private readonly canvas: HTMLCanvasElement;
-  private readonly scene: Scene;
-  private readonly engine: Engine;
-  private readonly camera: UniversalCamera;
-  private readonly light: HemisphericLight;
-
   /**
    * @param dimensions the dimensions i.e. x,y,z
    * @param canvas the canvas
+   * @param drawBoundaries whether to draw the world's boundaries
    */
-  constructor(dimensions: [number, number, number], canvas: HTMLCanvasElement) {
+  constructor(dimensions: [number, number, number], canvas: HTMLCanvasElement, drawBoundaries: boolean = true) {
     super(dimensions);
     this.canvas = canvas;
     this.engine = new Engine(this.canvas, true, {preserveDrawingBuffer: true, stencil: true});
     this.scene = new Scene(this.engine);
     this.camera = new UniversalCamera(
       'worldCamera',
-      new Vector3(this.dimensions[0] / 2, this.dimensions[1] * 1.5, this.dimensions[2] / 2), this.scene);
-    this.camera.setTarget(new Vector3(this.dimensions[0] / 2, this.dimensions[1] / 2, this.dimensions[2] / 2));
+      new Vector3(this.dimensions[0] * -2, this.dimensions[1] * 4, this.dimensions[2] * -2), this.scene);
+    this.camera.setTarget(new Vector3(this.dimensions[0], 0, this.dimensions[2]));
     this.camera.attachControl(canvas, false);
     // Create a basic light, aiming 0, 1, 0 - meaning, to the sky TODO play around for world
     this.light = new HemisphericLight('mainLight', new Vector3(0, 1, 0), this.scene);
 
-    this.showAxis(10);
+    // this.drawAxis(10);
+    if (drawBoundaries) {
+      BabylonJsWorld.drawBoundaries(this.dimensions, '#c2c2c2', this.scene);
+    }
 
     this.engine.runRenderLoop(() => {
       this.scene.render();
@@ -47,7 +45,48 @@ export class BabylonJsWorld extends World {
     });
   }
 
-  showAxis(size) {
+  private readonly canvas: HTMLCanvasElement;
+  private readonly scene: Scene;
+  private readonly engine: Engine;
+  private readonly camera: UniversalCamera;
+  private readonly light: HemisphericLight;
+
+  public static drawLine(scene, from: Vector3, to: Vector3, col, dashed: boolean = true) {
+    const length = Vector3.Distance(from, to);
+    const line = dashed
+      ? Mesh.CreateDashedLines('worldBoundaries', [from, to], 1,     1,     length, scene)
+      : Mesh.CreateLines('worldBoundaries', [from, to], scene);
+    line.color = Color3.FromHexString(col);
+  }
+
+  public static drawBoundaries(dimensions: [number, number, number], color, scene) {
+    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(dimensions[0] + 1, 0, 0), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(0, dimensions[1] + 1, 0), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(0, 0, dimensions[2] + 1), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(dimensions[0] + 1, dimensions[1] + 1, dimensions[2] + 1),
+      new Vector3(0, dimensions[1] + 1, dimensions[2] + 1), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(dimensions[0] + 1, dimensions[1] + 1, dimensions[2] + 1),
+      new Vector3(dimensions[0] + 1, 0, dimensions[2] + 1), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(dimensions[0] + 1, dimensions[1] + 1, dimensions[2] + 1),
+      new Vector3(dimensions[0] + 1, dimensions[1] + 1, 0), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(0, 0, dimensions[2] + 1), new Vector3(0, dimensions[1] + 1, dimensions[2] + 1), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(0, 0, dimensions[2] + 1), new Vector3(dimensions[0] + 1, 0, dimensions[2] + 1), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(0, dimensions[1] + 1, dimensions[2] + 1), new Vector3(0, dimensions[1] + 1, 0), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(0, dimensions[1] + 1, 0), new Vector3(dimensions[0] + 1, dimensions[1] + 1, 0), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(dimensions[0] + 1, dimensions[1] + 1, 0), new Vector3(dimensions[0] + 1, 0, 0), color);
+    BabylonJsWorld.drawLine(scene,
+      new Vector3(dimensions[0] + 1, 0, dimensions[2] + 1), new Vector3(dimensions[0] + 1, 0, 0), color);
+  }
+
+  drawAxis(size) {
     const makeTextPlane = (text, color, tpSize) => {
       const dynamicTexture = new DynamicTexture('DynamicTexture', 50, this.scene, true);
       dynamicTexture.hasAlpha = true;

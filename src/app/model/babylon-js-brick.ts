@@ -5,6 +5,7 @@ import MeshBuilder = BABYLON.MeshBuilder;
 import Mesh = BABYLON.Mesh;
 import StandardMaterial = BABYLON.StandardMaterial;
 import Color3 = BABYLON.Color3;
+import Vector3 = BABYLON.Vector3;
 
 export class BabylonJsBrick extends Brick {
 
@@ -19,6 +20,15 @@ export class BabylonJsBrick extends Brick {
   }
 
   /**
+   * Returns the real position within a {@BabylonJsWorld}
+   * @param position the virtual position
+   * @param dimensions the brick dimensions
+   */
+  public static correctBrickPosition(position: [number, number, number], dimensions: [number, number, number]): [number, number, number] {
+    return [position[0] + dimensions[0] / 2, position[2] + dimensions[2] / 2, position[1] + dimensions[1] / 2];
+  }
+
+  /**
    * Draws the brick.
    * @param scene the scene
    */
@@ -29,9 +39,10 @@ export class BabylonJsBrick extends Brick {
       scene);
     this.mesh.material =  new StandardMaterial('brick_material', scene);
     (this.mesh.material as StandardMaterial).diffuseColor = Color3.FromHexString(this.color);
-    this.mesh.position.x = this.position[0];
-    this.mesh.position.y = this.position[1];
-    this.mesh.position.z = this.position[2];
+    const absolutePosition = BabylonJsBrick.correctBrickPosition(this.position, this.dimensions);
+    this.mesh.position.x = absolutePosition[0];
+    this.mesh.position.y = absolutePosition[1];
+    this.mesh.position.z = absolutePosition[2];
   }
 
   /**

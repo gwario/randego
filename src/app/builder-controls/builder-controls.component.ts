@@ -18,6 +18,7 @@ export class BuilderControlsComponent implements OnInit {
   @Output() singleStepBuildStarted = new EventEmitter<void>();
 
   @Input() autoBuildProgress: number;
+  @Input() boxSize: number;
 
   readonly autoBuilderControlsDefaults = {
     autoBuilderControlsCount: 5,
