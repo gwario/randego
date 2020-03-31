@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
+import {Brick} from '../model/brick';
 
 @Component({
   selector: 'app-builder-controls',
@@ -18,7 +19,7 @@ export class BuilderControlsComponent implements OnInit {
   @Output() singleStepBuildStarted = new EventEmitter<void>();
 
   @Input() autoBuildProgress: number;
-  @Input() boxSize: number;
+  @Input() box: Array<[Brick, number]>;
 
   readonly autoBuilderControlsDefaults = {
     autoBuilderControlsCount: 5,
@@ -26,13 +27,17 @@ export class BuilderControlsComponent implements OnInit {
   };
 
   autoBuilderControlsForm = this.fb.group({
-    autoBuilderControlsCount: [this.autoBuilderControlsDefaults.autoBuilderControlsCount, Validators.min(2)],
-    autoBuilderControlsInterval: [this.autoBuilderControlsDefaults.autoBuilderControlsInterval, Validators.min(100)]
+    autoBuilderControlsCount: [this.autoBuilderControlsDefaults.autoBuilderControlsCount, [Validators.min(2)]],
+    autoBuilderControlsInterval: [this.autoBuilderControlsDefaults.autoBuilderControlsInterval, [Validators.min(100)]]
   });
 
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
+  }
+
+  brickCount(box: Array<[Brick, number]> = []): number {
+    return box.reduce((previousValue, currentValue) => previousValue[1] + currentValue[1], 0);
   }
 
   autoBuild() {

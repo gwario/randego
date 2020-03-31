@@ -30,10 +30,6 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
   }
 
-  brickCount(box: Array<[Brick, number]>): number {
-    return box.reduce((previousValue, currentValue) => previousValue[1] + currentValue[1], 0);
-  }
-
   addMesh(scene, pos, dim, col) {
     const mesh = MeshBuilder.CreateBox(
       'brick',
