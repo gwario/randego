@@ -1,4 +1,4 @@
-<form [formGroup]="autoBuilderControlsForm" class=" mb-3">
+<form [formGroup]="autoBuilderControlsForm" class="container-fluid mb-3">
   <div  class="form-group row mb-3">
     <button class="btn btn-primary" type="button" (click)="singleStepBuild()" [disabled]="brickCount(box) <= 0">Build Single Step</button>
   </div>
@@ -6,6 +6,7 @@
     <label for="autoBuilderControlsCount">Number of bricks</label>
     <input type="number" class="form-control" id="autoBuilderControlsCount" ngDefaultControl formControlName="autoBuilderControlsCount"
            min="2" step="1">
+    <!-- [max]="brickCount(box)" this does not work :/ -->
   </div>
   <div class="form-group row">
     <label for="autoBuilderControlsInterval">Build interval</label>
@@ -13,8 +14,19 @@
            min="100" step="100">
   </div>
   <div class="input-group row">
-    <button class="btn btn-primary" type="button" (click)="autoBuild()" [disabled]="!autoBuilderControlsForm.valid || autoBuildProgress > 0 || brickCount(box) <= 0">Auto Build</button>
-    <button class="btn btn-outline-primary" type="button" (click)="cancelAutoBuild()" *ngIf="autoBuildProgress > 0"
+    <button class="btn btn-primary col-6" type="button" (click)="autoBuild()"
+            [disabled]="!autoBuilderControlsForm.valid || autoBuildProgress > 0 || brickCount(box) <= 0">Auto Build</button>
+    <button class="btn btn-outline-primary col-6" type="button" (click)="cancelAutoBuild()"
+            *ngIf="autoBuildProgress > 0"
             [disabled]="brickCount(box) <= 0">Cancel</button>
   </div>
+  <ngb-alert [dismissible]="false" *ngIf="autoBuildProgress > 0" type="info" class="row mt-3">
+    <span class="col-12">({{autoBuildProgress}} bricks left...)</span>
+  </ngb-alert>
+  <ngb-alert [dismissible]="false" *ngIf="showBrickDiscardedWarning" type="warning" class="row mt-3">
+    <span class="col-12">This brick does not fit anywhere! Recycling :)</span>
+  </ngb-alert>
+  <ngb-alert [dismissible]="false" *ngIf="brickCount(box) <= 0" type="warning" class="row mt-3">
+    <span class="col-12">Your box is empty, create some new bricks!</span>
+  </ngb-alert>
 </form>

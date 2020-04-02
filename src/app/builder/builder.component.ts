@@ -3,9 +3,6 @@ import {Brick} from '../model/brick';
 import {interval, Subscription} from 'rxjs';
 import {BabylonJsWorld} from '../model/babylon-js-world';
 import {BabylonJsBrick} from '../model/babylon-js-brick';
-import Color3 = BABYLON.Color3;
-import StandardMaterial = BABYLON.StandardMaterial;
-import MeshBuilder = BABYLON.MeshBuilder;
 
 @Component({
   selector: 'app-builder',
@@ -27,21 +24,7 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {  }
 
-  ngAfterViewInit(): void {
-  }
-
-  addMesh(scene, pos, dim, col) {
-    const mesh = MeshBuilder.CreateBox(
-      'brick',
-      {width: dim[0], depth: dim[1], height: dim[2]},
-      scene);
-    mesh.material =  new StandardMaterial('brick_material', scene);
-    (mesh.material as StandardMaterial).diffuseColor = Color3.FromHexString(col);
-    mesh.position.x = pos[0];
-    mesh.position.y = pos[1];
-    mesh.position.z = pos[2];
-  }
-
+  ngAfterViewInit(): void {  }
 
   ngOnDestroy(): void {
     if (this.autoBuildIntervalSubscription) {
@@ -49,13 +32,17 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  /**
+   * Returns a random brick from the box.
+   * The brick is removed from the box.
+   */
   private pickRandomBrickFromBox(): Brick {
     if (this.box.length <= 0) {
       throw new Error(`Box is empty! Create new bricks.`);
     }
     const randomIndex = Math.floor(Math.random() * this.box.length);
     const boxItem = this.box[randomIndex];
-    const brick = boxItem[0];
+    const brick = boxItem[0].cloneAsTemplate();
     boxItem[1]--;
     if (boxItem[1] <= 0) {
       // last of this bricks... remove
@@ -65,15 +52,19 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
     return brick;
   }
 
-  private nextRandomWorldPosition(): [number, number, number] {
-    const dimensions = this.world.dimensions;
-    const randomPosition: [number, number, number] = [
-      Math.floor(Math.random() * dimensions[0]),
-      Math.floor(Math.random() * dimensions[1]),
-      Math.floor(Math.random() * dimensions[2])
-      ];
-    window.console.debug(`randomPosition: ${randomPosition}`);
-    return randomPosition;
+  /**
+   * Returns a random position from the world, where the brick would fit.
+   * @param brick a brick
+   */
+  private pickRandomPositionFromWorldFor(brick: Brick): [number, number, number] {
+    const possiblePositions: Array<[number, number, number]> = this.world.possiblePositionsFor(brick);
+    window.console.debug(`Possible positions:`, possiblePositions.length);
+    if (possiblePositions.length > 0) {
+      const randomPositionIndex = Math.floor(Math.random() * possiblePositions.length);
+      return possiblePositions[randomPositionIndex];
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -82,17 +73,13 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   onSingleStepBuildStarted($event: void) {
     const nextBrick = this.pickRandomBrickFromBox();
-    const possiblePositions: Array<[number, number, number]> = this.world.possiblePositionsFor(nextBrick);
-    window.console.debug(`Possible positions:`, possiblePositions);
-    if (possiblePositions.length > 0) {
-      const randomPositionIndex = Math.floor(Math.random() * possiblePositions.length);
-      // const nextPosition = this.nextRandomWorldPosition();
-      const nextPosition = possiblePositions[randomPositionIndex];
-      window.console.debug(`Trying to place brick at positions:`, nextPosition);
+    const nextPosition = this.pickRandomPositionFromWorldFor(nextBrick);
+    if (nextPosition) {
+      window.console.debug(`Random position for brick:`, nextPosition, nextBrick);
       this.world.putBrick(BabylonJsBrick.fromBrick(nextBrick), nextPosition);
-      window.console.debug(`Put brick at ${nextPosition}`);
     } else {
-      window.console.debug(`Unable to put brick anywhere in this world!`);
+      window.console.debug(`There is no position left where this brick would fit!`);
+      window.console.debug(`Discarding it!`, nextBrick);
     }
   }
 
@@ -111,8 +98,9 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
         this.onSingleStepBuildStarted();
         this.autoBuildProgress--;
       }
-      if (this.autoBuildProgress <= 0) {
+      if (this.autoBuildProgress <= 0 || this.box.length <= 0) {
         if (this.autoBuildIntervalSubscription) {
+          this.autoBuildProgress = 0;
           this.autoBuildIntervalSubscription.unsubscribe();
         }
       }

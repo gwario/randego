@@ -37,7 +37,7 @@ export class BoxItemCreatorComponent implements OnInit, AfterViewInit {
     width: 2,
     height: 2,
     color: '#a8e6cf',
-    amount: 10
+    amount: 10,
   };
 
   bricksForm = this.fb.group({

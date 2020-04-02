@@ -138,7 +138,13 @@ export class Brick {
     } else {
       throw new Error(`There is no connector at (${position})!`);
     }
+  }
 
+  /**
+   * Creates a copy of this brick.
+   */
+  cloneAsTemplate() {
+    return new Brick(this.dimensions, this.color);
   }
 
   /**

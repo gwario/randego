@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {Brick} from '../model/brick';
+import {Subject} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-builder-controls',
@@ -31,9 +33,16 @@ export class BuilderControlsComponent implements OnInit {
     autoBuilderControlsInterval: [this.autoBuilderControlsDefaults.autoBuilderControlsInterval, [Validators.min(100)]]
   });
 
+  showBrickDiscardedWarning: boolean;
+  private _showBrickDiscardedInfoSubject = new Subject<void>();
+
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    this._showBrickDiscardedInfoSubject.subscribe(_ => this.showBrickDiscardedWarning = true);
+    this._showBrickDiscardedInfoSubject.pipe(
+      debounceTime(5000)
+    ).subscribe(_ => this.showBrickDiscardedWarning = false);
   }
 
   brickCount(box: Array<[Brick, number]> = []): number {

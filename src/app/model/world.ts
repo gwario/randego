@@ -48,7 +48,7 @@ export class World {
   }
 
   public static assertWithinWorldBounds(objectPosition: [number, number, number], objectDimensions: [number, number, number],
-                                         worldDimensions: [number, number, number]) {
+                                        worldDimensions: [number, number, number]) {
     assert(objectPosition[0] + objectDimensions[0] <= worldDimensions[0]
       && objectPosition[1] + objectDimensions[1] <= worldDimensions[1]
       && objectPosition[2] + objectDimensions[2] <= worldDimensions[2],
@@ -57,7 +57,7 @@ export class World {
 
   public static assertBrickNotConnectedToAny(brick: Brick) {
     assert(!brick.isConnectedToAnyBrick(),
-      `Brick is already connected to other bricks. Use a completely disconnected brick!`);
+      `Brick is already connected to other bricks. Use a completely disconnected brick! ${brick}`);
   }
 
   public static assertNoneConnectedToBrick(brick: Brick, otherBricks: Array<Brick>) {
@@ -66,7 +66,7 @@ export class World {
   }
 
   public static assertBrickNotPositioned(brick: Brick) {
-    assert(brick.position === null || brick.position.every(dim => dim === null), `Brick has already a position (${brick.position})!`);
+    assert(brick.position == null || brick.position.every(dim => dim == null), `Brick has already a position (${brick.position})!`);
   }
 
   public static assertBrickNotInWorld(brick: Brick, space: Brick[][][]) {
@@ -105,13 +105,13 @@ export class World {
         // check bottom plane (z-1) (the position is on the bottom plane - always fine!)
         if (!onBottomPlane) {
           const brickBelow = space[x][y][position[2] - 1];
-          if (brickBelow !== null) {
+          if (brickBelow != null) {
             bricksBelow.push(brickBelow);
           }
         }
         // check top plane (z+1)
         const brickAbove = space[x][y][position[2] + brick.dimensions[2]];
-        if (brickAbove !== null) {
+        if (brickAbove != null) {
           bricksAbove.push(brickAbove);
         }
       }
@@ -203,14 +203,14 @@ export class World {
         if (!onBottomPlane) {
           // bottom plane (z-1)
           const brickBelow = this.space[x][y][position[2] - 1];
-          if (brickBelow !== null) {
+          if (brickBelow != null) {
             // add to the bricks bottom connections
             brickBelow.connect(brick, [x, y, position[2] - 1]);
           }
         }
         // top plane (z+1)
         const brickAbove = this.space[x][y][position[2] + brick.dimensions[2]];
-        if (brickAbove !== null) {
+        if (brickAbove != null) {
           // add to the bricks top connections
           brickAbove.connect(brick, [x, y, position[2] + brick.dimensions[2]]);
         }
