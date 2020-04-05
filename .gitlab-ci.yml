@@ -61,6 +61,7 @@ deploy:pages:
     - test:unit
   script:
     - mv coverage/ public/
+    - mv public/randego public/coverage
   artifacts:
     paths:
       - public
