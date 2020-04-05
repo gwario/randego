@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BuilderControlsComponent } from './builder-controls.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('BuilderControlsComponent', () => {
   let component: BuilderControlsComponent;
@@ -10,7 +11,8 @@ describe('BuilderControlsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ BuilderControlsComponent ],
-      imports: [ ReactiveFormsModule ]
+      imports: [ ReactiveFormsModule ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));

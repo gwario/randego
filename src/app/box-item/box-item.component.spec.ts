@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BoxItemComponent } from './box-item.component';
 import {Brick} from '../model/brick';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('BoxItemComponent', () => {
   let component: BoxItemComponent;
@@ -9,7 +10,8 @@ describe('BoxItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BoxItemComponent ]
+      declarations: [ BoxItemComponent ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));

@@ -1,4 +1,4 @@
-import { Brick } from './brick';
+import {Brick} from './brick';
 
 describe('Block', () => {
   it('should create an instance', () => {

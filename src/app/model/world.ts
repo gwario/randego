@@ -49,6 +49,8 @@ export class World {
 
   public static assertWithinWorldBounds(objectPosition: [number, number, number], objectDimensions: [number, number, number],
                                         worldDimensions: [number, number, number]) {
+    assert(objectPosition[0] >= 0 && objectPosition[1] >= 0 && objectPosition[2] >= 0,
+      `Brick can't be placed at position (${objectPosition}) since it would exceed the worlds space!`);
     assert(objectPosition[0] + objectDimensions[0] <= worldDimensions[0]
       && objectPosition[1] + objectDimensions[1] <= worldDimensions[1]
       && objectPosition[2] + objectDimensions[2] <= worldDimensions[2],
@@ -74,18 +76,14 @@ export class World {
       `Brick is already referenced!`);
   }
 
-  public static assertBrickFits(brick: Brick, position: [number, number, number], space: Brick[][][]) {
+  public static assertBrickNotBlockedByOtherBrickInWorld(brick: Brick, position: [number, number, number], space: Brick[][][]) {
     // check whether the brick would fit at the desired position and check whether the brick is already in this world
-    for (let x = 0; x < space.length; x++) {
-      for (let y = 0; y < space[x].length; y++) {
-        for (let z = 0; z < space[x][y].length; z++) {
+    for (let x = position[0]; x < position[0] + brick.dimensions[0]; x++) {
+      for (let y = position[1]; y < position[1] + brick.dimensions[1]; y++) {
+        for (let z = position[2]; z < position[2] + brick.dimensions[2]; z++) {
           // for every position
           // check if the brick would fit at this position
-          if (position[0] <= x && x < position[0] + brick.dimensions[0]
-            && position[1] <= y && y < position[1] + brick.dimensions[1]
-            && position[2] <= z && z < position[2] + brick.dimensions[2]) {
-            assert(space[x][y][z] === null, `Brick cannot be placed, because some space is already occupied (${[x, y, z]})`);
-          }
+          assert(space[x][y][z] === null, `Brick cannot be placed, because some space is already occupied (${[x, y, z]})`);
         }
       }
     }
@@ -138,7 +136,7 @@ export class World {
 
     World.assertBrickNotInWorld(brick, this.space);
 
-    World.assertBrickFits(brick, position, this.space);
+    World.assertBrickNotBlockedByOtherBrickInWorld(brick, position, this.space);
     World.assertConnectableBelowOrAbove(brick, position, this.space);
 
     this.placeBrickAt(brick, position);
@@ -172,7 +170,7 @@ export class World {
         for (let y = 0; y < this.dimensions[1]; y++) {
           try {
             World.assertWithinWorldBounds([x, y, z], brick.dimensions, this._dimensions);
-            World.assertBrickFits(brick, [x, y, z], this.space);
+            World.assertBrickNotBlockedByOtherBrickInWorld(brick, [x, y, z], this.space);
             World.assertConnectableBelowOrAbove(brick, [x, y, z], this.space);
             // window.console.debug(`Possible position ${[x, y, z]}`);
             possiblePositions.push([x, y, z]);
