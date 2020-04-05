@@ -95,26 +95,36 @@ export class World {
     // the bottom planes of the world is full of connectors
     // the brick must have at least one brick below or above
     const onBottomPlane = position[2] === 0;
+    const onTopPlane = position[2] + brick.dimensions[2] === space[0][0].length;
     // 1. get the brick above and below
     const bricksBelow = [];
     const bricksAbove = [];
-    for (let x = position[0]; x < brick.dimensions[0]; x++) {
-      for (let y = position[1]; y < brick.dimensions[1]; y++) {
+    for (let x = position[0]; x < position[0] + brick.dimensions[0]; x++) {
+      for (let y = position[1]; y < position[1] + brick.dimensions[1]; y++) {
         // check bottom plane (z-1) (the position is on the bottom plane - always fine!)
         if (!onBottomPlane) {
           const brickBelow = space[x][y][position[2] - 1];
+          // window.console.debug(`Brick below at ${[x, y, position[2] - 1]} is `, brickBelow);
           if (brickBelow != null) {
             bricksBelow.push(brickBelow);
           }
         }
         // check top plane (z+1)
-        const brickAbove = space[x][y][position[2] + brick.dimensions[2]];
-        if (brickAbove != null) {
-          bricksAbove.push(brickAbove);
+        if (!onTopPlane) {
+          const brickAbove = space[x][y][position[2] + brick.dimensions[2]];
+          // window.console.debug(`Space`, space);
+          // window.console.debug(`Brick above at ${[x, y, position[2] + brick.dimensions[2]]} is `, brickAbove);
+          if (brickAbove != null) {
+            bricksAbove.push(brickAbove);
+          }
         }
       }
     }
     // 2. check if there are some (the position is on the bottom plane - always fine!)
+    // window.console.debug(`Bricks above:`, bricksAbove);
+    // window.console.debug(`Bricks below:`, bricksBelow);
+    // window.console.debug(`Is top plane: ${onTopPlane}`);
+    // window.console.debug(`Is bottom plane: ${onBottomPlane}`);
     assert(bricksAbove.length + bricksBelow.length > 0 || onBottomPlane,
       `Not enough bricks to connect to below and above!`);
   }
@@ -126,6 +136,8 @@ export class World {
    * @param position the position for the brick, i.e. [x,y,z]
    */
   public putBrick(brick: Brick, position: [number, number, number]): boolean | never {
+    // window.console.info(`Before: ${brick.dimensions} at ${position}`);
+    // window.console.info(this.space);
     // check if the brick fits in the world
     World.assertPositionValid(position);
     World.assertWithinWorldBounds(position, brick.dimensions, this._dimensions);
@@ -141,7 +153,8 @@ export class World {
 
     this.placeBrickAt(brick, position);
     this.usedBricks.push(brick);
-    // window.console.debug(`Put brick result:`, brick);
+    // window.console.info(`After: ${brick.dimensions} at ${brick.position}`);
+    // window.console.info(this.space);
     return true;
   }
 
@@ -191,12 +204,12 @@ export class World {
   private placeBrickAt(brick: Brick, position: [number, number, number]) {
     // set position in world
     brick.position = position;
-    window.console.debug(`World.placeBrickAt: ${brick.position}`);
+    // window.console.debug(`World.placeBrickAt: ${brick.position}`);
 
     const onBottomPlane = position[2] === 0;
     // add to world and adjacent bricks
-    for (let x = position[0]; x < brick.dimensions[0]; x++) {
-      for (let y = position[1]; y < brick.dimensions[1]; y++) {
+    for (let x = position[0]; x < position[0] + brick.dimensions[0]; x++) {
+      for (let y = position[1]; y < position[1] + brick.dimensions[1]; y++) {
 
         if (!onBottomPlane) {
           // bottom plane (z-1)
@@ -213,8 +226,10 @@ export class World {
           brickAbove.connect(brick, [x, y, position[2] + brick.dimensions[2]]);
         }
 
-        for (let z = position[2]; z < brick.dimensions[2]; z++) {
+        // window.console.log(`Setting references in world at ${[x, y, position[2] + '-' + (position[2] + brick.dimensions[2])]}`);
+        for (let z = position[2]; z < position[2] + brick.dimensions[2]; z++) {
           // add to world
+          // window.console.log(`Put brick at ${[x, y, z]}`);
           this.space[x][y][z] = brick;
         }
       }

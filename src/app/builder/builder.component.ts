@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Brick} from '../model/brick';
-import {interval, Subscription} from 'rxjs';
+import {interval, Subject, Subscription} from 'rxjs';
 import {BabylonJsWorld} from '../model/babylon-js-world';
 import {BabylonJsBrick} from '../model/babylon-js-brick';
 
@@ -19,10 +19,13 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   autoBuildProgress = 0;
   private autoBuildIntervalSubscription: Subscription;
+  showBrickDiscardedInfoSubject: Subject<void>;
 
   constructor() {  }
 
-  ngOnInit(): void {  }
+  ngOnInit(): void {
+    this.showBrickDiscardedInfoSubject = new Subject<void>();
+  }
 
   ngAfterViewInit(): void {  }
 
@@ -80,6 +83,7 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       window.console.debug(`There is no position left where this brick would fit!`);
       window.console.debug(`Discarding it!`, nextBrick);
+      this.showBrickDiscardedInfoSubject.next();
     }
   }
 
@@ -121,5 +125,15 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   initializeWorld(dimensions: [number, number, number]) {
     this.world = new BabylonJsWorld(dimensions, this.canvas.nativeElement);
+    //
+    // const world = new BabylonJsWorld([8, 8, 8], this.canvas.nativeElement);
+    // // add tower
+    // world.putBrick(new Brick([8, 2, 2], '#550000'), [0, 0, 0]);
+    // world.putBrick(new Brick([6, 2, 2], '#000055'), [0, 0, 2]);
+    // world.putBrick(new Brick([4, 2, 2], '#AA0000'), [0, 0, 4]);
+    // // add top plate
+    // world.putBrick(new Brick([8, 8, 2], '#111111'), [0, 0, 6]);
+    // // // the one that's hanging
+    // world.putBrick(new Brick([2, 2, 2], '#AAAAAA'),  [6, 6, 4]);
   }
 }

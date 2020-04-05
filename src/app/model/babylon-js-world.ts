@@ -60,30 +60,21 @@ export class BabylonJsWorld extends World {
   }
 
   public static drawBoundaries(dimensions: [number, number, number], color, scene) {
-    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(dimensions[0] + 1, 0, 0), color);
-    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(0, dimensions[1] + 1, 0), color);
-    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(0, 0, dimensions[2] + 1), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(dimensions[0] + 1, dimensions[1] + 1, dimensions[2] + 1),
-      new Vector3(0, dimensions[1] + 1, dimensions[2] + 1), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(dimensions[0] + 1, dimensions[1] + 1, dimensions[2] + 1),
-      new Vector3(dimensions[0] + 1, 0, dimensions[2] + 1), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(dimensions[0] + 1, dimensions[1] + 1, dimensions[2] + 1),
-      new Vector3(dimensions[0] + 1, dimensions[1] + 1, 0), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(0, 0, dimensions[2] + 1), new Vector3(0, dimensions[1] + 1, dimensions[2] + 1), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(0, 0, dimensions[2] + 1), new Vector3(dimensions[0] + 1, 0, dimensions[2] + 1), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(0, dimensions[1] + 1, dimensions[2] + 1), new Vector3(0, dimensions[1] + 1, 0), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(0, dimensions[1] + 1, 0), new Vector3(dimensions[0] + 1, dimensions[1] + 1, 0), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(dimensions[0] + 1, dimensions[1] + 1, 0), new Vector3(dimensions[0] + 1, 0, 0), color);
-    BabylonJsWorld.drawLine(scene,
-      new Vector3(dimensions[0] + 1, 0, dimensions[2] + 1), new Vector3(dimensions[0] + 1, 0, 0), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(dimensions[0],0, 0), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(0, dimensions[1], 0), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, 0), new Vector3(0, 0, dimensions[2]), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(dimensions[0], dimensions[1], dimensions[2]), new Vector3(0, dimensions[1], dimensions[2]),
+      color);
+    BabylonJsWorld.drawLine(scene, new Vector3(dimensions[0], dimensions[1], dimensions[2]), new Vector3(dimensions[0], 0, dimensions[2]),
+      color);
+    BabylonJsWorld.drawLine(scene, new Vector3(dimensions[0], dimensions[1], dimensions[2]), new Vector3(dimensions[0], dimensions[1], 0),
+      color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, dimensions[2]), new Vector3(0, dimensions[1], dimensions[2]), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, 0, dimensions[2]), new Vector3(dimensions[0], 0, dimensions[2]), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, dimensions[1], dimensions[2]), new Vector3(0, dimensions[1], 0), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(0, dimensions[1], 0), new Vector3(dimensions[0], dimensions[1], 0), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(dimensions[0], dimensions[1], 0), new Vector3(dimensions[0], 0, 0), color);
+    BabylonJsWorld.drawLine(scene, new Vector3(dimensions[0], 0, dimensions[2]), new Vector3(dimensions[0], 0, 0), color);
   }
 
   drawAxis(size) {

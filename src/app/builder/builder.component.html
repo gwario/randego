@@ -6,6 +6,7 @@
                           (autoBuildStarted)="onAutoBuildStarted($event)"
                           (autoBuildCancelled)="onAutoBuildCancelled($event)"
                           [autoBuildProgress]="autoBuildProgress"
+                          [showBrickDiscardedInfoSubject]="showBrickDiscardedInfoSubject"
                           (singleStepBuildStarted)="onSingleStepBuildStarted($event)"></app-builder-controls>
 
     <canvas #canvas id="preview-builder" class="col-xs-12 col-sm-12 col-md-8 col-lg-9 col-xl-10"></canvas>

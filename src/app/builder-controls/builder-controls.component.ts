@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {Brick} from '../model/brick';
 import {Subject} from 'rxjs';
@@ -9,7 +9,7 @@ import {debounceTime} from 'rxjs/operators';
   templateUrl: './builder-controls.component.html',
   styleUrls: ['./builder-controls.component.scss']
 })
-export class BuilderControlsComponent implements OnInit {
+export class BuilderControlsComponent implements OnInit, AfterViewInit {
 
   /**
    * [count, interval]
@@ -19,6 +19,8 @@ export class BuilderControlsComponent implements OnInit {
   @Output() autoBuildCancelled = new EventEmitter<void>();
 
   @Output() singleStepBuildStarted = new EventEmitter<void>();
+
+  @Input() showBrickDiscardedInfoSubject: Subject<void>;
 
   @Input() autoBuildProgress: number;
   @Input() box: Array<[Brick, number]>;
@@ -34,13 +36,14 @@ export class BuilderControlsComponent implements OnInit {
   });
 
   showBrickDiscardedWarning: boolean;
-  private _showBrickDiscardedInfoSubject = new Subject<void>();
 
   constructor(private fb: FormBuilder) { }
 
-  ngOnInit(): void {
-    this._showBrickDiscardedInfoSubject.subscribe(_ => this.showBrickDiscardedWarning = true);
-    this._showBrickDiscardedInfoSubject.pipe(
+  ngOnInit(): void {  }
+
+  ngAfterViewInit(): void {
+    this.showBrickDiscardedInfoSubject.subscribe(_ => this.showBrickDiscardedWarning = true);
+    this.showBrickDiscardedInfoSubject.pipe(
       debounceTime(5000)
     ).subscribe(_ => this.showBrickDiscardedWarning = false);
   }
