@@ -55,7 +55,7 @@ deploy:production:
   only:
     - tags
 
-deploy:pages:
+pages:
   stage: deploy
   dependencies:
     - test:unit
