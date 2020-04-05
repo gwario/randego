@@ -225,7 +225,7 @@ describe('World', () => {
 
     // the one that's hanging
     const hangingBrick = new Brick([2, 2, 2], '#AAAAAA');
-    expect(() => World.assertConnectableBelowOrAbove(hangingBrick, [6, 6, 4], sapceZ_8x8x8_empty)).toThrowError();
+    expect(() => World.assertConnectableBelowOrAbove(hangingBrick, [6, 6, 4], sapceZ_8x8x8_empty)).not.toThrowError();
   });
 
   it('.assertBrickNotConnectedToAny should not throw for new brick', () => {
