@@ -55,7 +55,8 @@ deploy:production:
   only:
     - tags
 
-deploy:coverage:
+# The name pages seems to be special and must no be changed
+pages:
   stage: deploy
   dependencies:
     - test:unit
