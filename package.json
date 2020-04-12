@@ -1,6 +1,6 @@
 {
   "name": "randego",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -25,6 +25,7 @@
     "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
     "@ng-bootstrap/ng-bootstrap": "^6.0.2",
     "babylonjs": "^4.1.0",
+    "babylonjs-gui": "^4.1.0",
     "bootstrap-scss": "^4.4.1",
     "material-community-components": "^6.0.0",
     "rxjs": "~6.5.4",

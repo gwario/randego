@@ -25,6 +25,13 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.showBrickDiscardedInfoSubject = new Subject<void>();
+    document.onfullscreenchange = _ => {
+      if (document.fullscreenElement) {
+        console.log(`Element: ${document.fullscreenElement.id} entered full-screen mode.`);
+      } else {
+        console.log('Leaving full-screen mode.');
+      }
+    };
   }
 
   ngAfterViewInit(): void {  }
@@ -97,7 +104,7 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
     const intervalMs = $event[1];
 
     this.autoBuildProgress = count;
-    this.autoBuildIntervalSubscription = interval(intervalMs).subscribe(val => {
+    this.autoBuildIntervalSubscription = interval(intervalMs).subscribe(_ => {
       if (this.autoBuildProgress > 0) {
         this.onSingleStepBuildStarted();
         this.autoBuildProgress--;
@@ -135,5 +142,10 @@ export class BuilderComponent implements OnInit, OnDestroy, AfterViewInit {
     // world.putBrick(new Brick([8, 8, 2], '#111111'), [0, 0, 6]);
     // // // the one that's hanging
     // world.putBrick(new Brick([2, 2, 2], '#AAAAAA'),  [6, 6, 4]);
+  }
+
+  openFullscreen(): Promise<void> {
+    this.canvas.nativeElement.focus();
+    return this.canvas.nativeElement.requestFullscreen();
   }
 }
