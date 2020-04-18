@@ -47,6 +47,7 @@ export class BoxItemComponent implements OnInit, AfterViewInit {
     const material = new StandardMaterial('blo12ck_mat', scene);
     material.diffuseColor = Color3.FromHexString(this.brick.color);
     this.brickMash.material = material;
+    scene.freezeActiveMeshes();
     // scene.removeMesh(box);
     // this.blockPreview.position.y = 1;
     // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable

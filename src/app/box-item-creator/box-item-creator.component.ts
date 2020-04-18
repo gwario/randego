@@ -7,11 +7,14 @@ import Mesh = BABYLON.Mesh;
 import Vector3 = BABYLON.Vector3;
 import StandardMaterial = BABYLON.StandardMaterial;
 import Color3 = BABYLON.Color3;
+import Animation = BABYLON.Animation;
 import Scene = BABYLON.Scene;
-import UniversalCamera = BABYLON.UniversalCamera;
 import MeshBuilder = BABYLON.MeshBuilder;
 import HemisphericLight = BABYLON.HemisphericLight;
 import Engine = BABYLON.Engine;
+import ArcRotateCamera = BABYLON.ArcRotateCamera;
+import Quaternion = BABYLON.Quaternion;
+import Axis = BABYLON.Axis;
 
 @Component({
   selector: 'app-box-item-creator',
@@ -66,14 +69,16 @@ export class BoxItemCreatorComponent implements OnInit, AfterViewInit {
     const canvas = this.canvas.nativeElement;
     const engine = new Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true});
     const scene = new Scene(engine);
-    const camera = new UniversalCamera('camera1', new Vector3(0, 5, -10), scene);
-    camera.setTarget(Vector3.Zero());
+    const camera = new ArcRotateCamera('camera1', - Math.PI / 4, Math.PI / 3, 15,  Vector3.Zero(), scene);
     camera.attachControl(canvas, false);
-    const light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
+    const light = new HemisphericLight('light1', new Vector3(0, 0, 10), scene);
 
     this.brickMesh = MeshBuilder.CreateBox('block', {width: 1, depth: 1, height: 1}, scene);
     this.brickMesh.material = new StandardMaterial('blo12ck_mat', scene);
     (this.brickMesh.material as StandardMaterial).diffuseColor = Color3.FromHexString('#a8e6cf');
+    const animation = Animation.CreateAndStartAnimation('animation',  this.brickMesh, 'rotation.y',
+      30, 100, this.brickMesh.rotation.y, this.brickMesh.rotation.y + Math.PI * 2,
+      Animation.ANIMATIONLOOPMODE_CYCLE);
     // scene.removeMesh(box);
     // this.blockPreview.position.y = 1;
     // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
